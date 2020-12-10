@@ -1,5 +1,7 @@
 package com.board.web.board;
 
+import java.io.Serializable;
+
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -14,8 +16,10 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardModel {
-	public int boardSeq;
-	public String boardContent;
-	public String boardTitle;
+public class BoardModel implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	private int boardSeq;
+	private String boardContent;
+	private String boardTitle;
 }
