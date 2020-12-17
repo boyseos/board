@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoardRepository {
-	public Map<String, Object> selectAll() throws Exception;
+	public Map<String, Object> findAll() throws Exception;
+	public Map<String, Object> findBoardSeq() throws Exception;
 }

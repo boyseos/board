@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestController("/board")
 public class BoardController {
 	@Autowired BoardRepository boardRepository;
 	
@@ -17,7 +17,7 @@ public class BoardController {
 		Supplier<Map<?, ?>> selectAll = () -> {
 			Map<String, Object> map = new HashMap<String, Object>();
 			try {
-				map = boardRepository.selectAll();
+				map = boardRepository.findAll();
 			} catch (Exception e) {
 				e.printStackTrace();
 				map.put("error",e.toString());
