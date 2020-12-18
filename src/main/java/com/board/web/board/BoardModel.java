@@ -1,6 +1,7 @@
 package com.board.web.board;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,11 @@ public class BoardModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private int boardSeq;
-	private String boardContent;
+	private String boardKind;
 	private String boardTitle;
+	private String boardWriter;
+	private String boardContent;
+	private Date boardDate;
+	private int boardViewCount;
+	private int boardVote;
 }
