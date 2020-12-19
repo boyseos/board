@@ -6,10 +6,19 @@
 	<select id="findAll" resultType="BoardModel">
 		SELECT *
 		FROM board
-		ORDER BY `boardSeq` ASC LIMIT 10
+	</select>
+	<select id="getPage" resultType="BoardModel">
+		SELECT *
+		FROM board
+		ORDER BY `boardSeq` DESC LIMIT #{page} , #{pageSize}
 	</select>
 	<select id="boardCount" resultType="int">
 		SELECT count(*)
 		from board
 	</select>
+	<insert id="insertBoard" parameterType="BoardModel">
+		INSERT INTO `board`
+			(`boardContent`, `boardTitle`, `boardWriter`,`boardDate`)
+			VALUES (#{boardContent},#{boardTitle},#{boardWriter},NOW());
+	</insert>
 </mapper>
