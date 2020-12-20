@@ -14,10 +14,14 @@
         </table>
         <div>
             <div>
+                <span v-show="pageVo.page > 5"
+                    @click="getBoardByPage((pageVo.block()-2)*5+1,pageVo.pageSize)">&laquo;</span>
                 <span v-for="page in pageVo.pageArray()" :key="page" 
-                    @click="getBoardByPage(page,pageVo.pageSize)">
+                    @click="page != pageVo.page ? getBoardByPage(page,pageVo.pageSize) : undefined">
                     {{page}}
                 </span>
+                <span v-show="pageVo.block() < pageVo.blockCount()"
+                    @click="getBoardByPage(pageVo.block()*5+1,pageVo.pageSize)">&raquo;</span>
             </div>
             <span style="border: 2px solid" @click="goWrite()">글쓰기</span>
         </div>
@@ -41,15 +45,13 @@ export default {
             pageVo: {
                 boardCount: 0,
                 page: 1,
-                pageSize: 5,
+                pageSize: 4,
+                block: () => parseInt((this.pageVo.page - 1)/ 5) + 1,
                 pageCount: () => parseInt((this.pageVo.boardCount - 1)/ this.pageVo.pageSize) + 1,
                 blockCount: () => parseInt((this.pageVo.pageCount() -1) / 5) + 1,
-                pageArray: () => this.pageVo.page + 5
-                //Array.from({length:5},)
-                    // (parseInt((this.pageVo.page -1) / 5) + 1) * 5 > this.pageVo.pageCount()
-                    // ? this.pageVo.pageCount()
-                    // : this.pageVo.page * 5
-
+                pageArray: () => Array.from({length: this.pageVo.block() * 5 < this.pageVo.pageCount() 
+                    ? 5 : this.pageVo.pageCount() - (this.pageVo.block() - 1) * 5},
+                    (_,i)=> (this.pageVo.block() - 1) * 5 + i + 1)          
             },
             boardTableTh:{
                 boardSeq:'번호',
@@ -73,7 +75,7 @@ export default {
                         : console.log(data.status)
                     console.log(
                         'page = '+ this.pageVo.page,
-                        'boardCount = '+ this.pageVo.boardCount,
+                        'block = '+ this.pageVo.block(),
                         'pageCount = '+ this.pageVo.pageCount(),
                         'blockCount = '+ this.pageVo.blockCount(),
                         'pageArray = '+ this.pageVo.pageArray()
