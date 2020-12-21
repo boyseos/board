@@ -11,6 +11,8 @@ public interface BoardRepository {
 	public List<BoardModel> findAll() throws Exception;
 	public List<BoardModel> getPage(@Param("page") int page, @Param("pageSize")int pageSize) throws Exception;
 	public int boardCount() throws Exception;
+	public BoardModel findByBoardSeq(@Param("seq") int seq) throws Exception;
+	public void boardViewCountUp(@Param("seq") int seq) throws Exception;
+	public void updateByBoardSeq(BoardModel board) throws Exception;
 	public boolean insertBoard(BoardModel board) throws Exception;
-	public Map<String, Object> findBoardSeq() throws Exception;
 }

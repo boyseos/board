@@ -1,12 +1,12 @@
 <template>
   <div class="home">
-    <Board/>
+    <board/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Board from '@/views/Board.vue'
+import Board from '@/views/board/Board.vue'
 
 export default {
   name: 'Home',

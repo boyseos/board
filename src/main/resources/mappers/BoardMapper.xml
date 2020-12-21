@@ -16,6 +16,23 @@
 		SELECT count(*)
 		from board
 	</select>
+	<select id="findByBoardSeq" resultType="BoardModel">
+		SELECT *
+		FROM board
+		Where boardSeq = #{seq}
+	</select>
+	<update id="boardViewCountUp">
+		UPDATE board
+		SET boardViewCount = boardViewCount + 1
+		Where boardSeq = #{seq}	
+	</update>
+	<update id="updateByBoardSeq" parameterType="BoardModel">
+		UPDATE board
+		SET boardTitle = #{boardTitle},
+			boardWriter = #{boardWriter},
+			boardContent = #{boardContent}
+		Where boardSeq = #{boardSeq}
+	</update>
 	<insert id="insertBoard" parameterType="BoardModel">
 		INSERT INTO `board`
 			(`boardContent`, `boardTitle`, `boardWriter`,`boardDate`)

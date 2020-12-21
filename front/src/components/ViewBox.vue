@@ -1,0 +1,59 @@
+<template>
+    <div>
+        <table>
+            <tr>
+                <th>title</th>
+                <th>
+                    <input v-model="boardModel.boardTitle" @input="update()" type="text">
+                </th>
+            </tr>
+            <tr>
+                <th>writer</th>
+                <th>
+                    <input v-model="boardModel.boardWriter" @input="update()" type="text">
+                </th>
+            </tr>
+            <tr>
+                <th>content</th>
+                <th>
+                    <textarea v-model="boardModel.boardContent" @input="update()" cols="30" rows="10"/>
+                </th>
+            </tr>
+        </table>
+    </div>
+</template>
+
+<script>
+//import axios from 'axios'
+
+export default {
+    props:{
+        boardProps:{
+            type: Object,
+            required: false,
+            default(){
+                return {
+                    boardTitle: '',
+                    boardWriter: '',
+                    boardContent: ''
+                }
+            }
+        },
+    },
+    data(){
+        return{
+            boardModel: this.boardProps
+        }
+    },
+    methods:{
+        update(){
+            this.$emit('update:boardProps', this.boardModel)
+        }
+    }
+    
+}
+</script>
+
+<style>
+
+</style>
