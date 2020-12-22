@@ -1,6 +1,8 @@
 package com.board.web.board;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*")
@@ -19,15 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/board")
 public class BoardController {
 	@Autowired BoardRepository boardRepository;
+	@Autowired BoardService boardService;
 	
-	@GetMapping("/page={page}&pageSize={pageSize}")
-	public List<BoardModel> getPage(@PathVariable int page, @PathVariable int pageSize) throws Exception {
-		return boardRepository.getPage((page-1)*pageSize,pageSize);
+	@GetMapping("/param={param}")
+	public List<BoardModel> getPage(@PathVariable String param) throws Exception {
+		Map<String, Object> map = boardService.stringToMap(param);
+		System.out.println("getpage =" + map.toString());
+		return boardRepository.getPage(map);
 	}
 	
-	@GetMapping("/count")
-	public int boardCount() throws Exception {
-		return boardRepository.boardCount();
+	@GetMapping("/count/param={param}")
+	public int boardCount(@PathVariable String param) throws Exception {
+		int value = boardRepository.boardCount(boardService.stringToMap(param));
+		System.out.println("boardCount ="+value);
+		return value;
 	}
 	
 	@GetMapping("/seq={seq}")
@@ -42,7 +48,7 @@ public class BoardController {
 	}
 	@PostMapping("/write")
 	public boolean boardWrite(@RequestBody BoardModel board) throws Exception{
+		System.out.println("글쓰기 받음 = "+board.toString());
 		return boardRepository.insertBoard(board);
 	}
-
 }

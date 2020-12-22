@@ -15,23 +15,26 @@
         <div>
             <div>
                 <span v-show="prevBlock"
-                    @click="getBoardByPage(prevBlockNum,pageVo.pageSize)">&laquo;</span>
+                    @click="getBoard(prevBlockNum)">&laquo;</span>
                 <span v-for="page in pageVo.pageArray()" :key="page" 
-                    @click="page != pageVo.page ? getBoardByPage(page,pageVo.pageSize) : undefined">
+                    @click="page != pageVo.page ? getBoard(page) : undefined">
                     {{page}}
                 </span>
                 <span v-show="nextBlock"
-                    @click="getBoardByPage(nextBlockNum,pageVo.pageSize)">&raquo;</span>
+                    @click="getBoard(nextBlockNum)">&raquo;</span>
             </div>
-            <div>                
-                <select ref="searchBy">
+            <div>
+                <label v-for="(box) in boardKinds" :key="box">
+                    <input :ref="'checked'+box.value" @click="check" :value="box.value" type="checkbox" checked>{{box.text}}
+                </label>
+                <select v-model="getBoardRequest.searchType">
                     <option value="boardTitle" selected="selected">제목</option>
                     <option value="boardWriter">글쓴이</option>
                     <option value="boardContent">글내용</option>
                     <option value="boardReply">덧글</option>
                 </select>
-                <input type="text">
-                <span style="border: 2px solid" @click="goSearch()">검색</span>
+                <input ref="searchWord" type="text">
+                <span style="border: 2px solid" @click="getBoard(0)">검색</span>
                 <span style="border: 2px solid" @click="goWrite()">글쓰기</span>
             </div>
         </div>
@@ -42,13 +45,8 @@
 import axios from 'axios'
 export default {
     beforeMount(){
-        axios.get('http://localhost:8000/board/count')
-            .then(data=>{
-                if(data.status === 200){
-                    this.pageVo.boardCount = data.data
-                    this.getBoardByPage(1,this.pageVo.pageSize)
-                }                 
-            })
+        this.getBoardCount()
+        this.getBoard(1)
     },
     data(){
         return {
@@ -60,10 +58,23 @@ export default {
                 pageCount: () => parseInt((this.pageVo.boardCount - 1)/ this.pageVo.pageSize) + 1,
                 blockCount: () => parseInt((this.pageVo.pageCount() -1) / 5) + 1,
                 pageArray: () => Array.from(
-                    {length: this.pageVo.block() * 5 < this.pageVo.pageCount() 
+                    {length: this.pageVo.block() * 5 < this.pageVo.pageCount()
                         ? 5 : this.pageVo.pageCount() - (this.pageVo.block() - 1) * 5},
                     (_,i)=> (this.pageVo.block() - 1) * 5 + i + 1)          
             },
+            getBoardRequest:{
+                startRow : 0,
+                rowLimit : 0,
+                boardKind : 256,
+                searchType : 'boardTitle',
+                searchWord : undefined
+            },
+            boardKinds:[
+                {value:1, text:'자유'},
+                {value:2, text:'Q&A'},
+                {value:4, text:'질문'},
+                {value:8, text:'Test'}
+            ],
             boardTableTh:{
                 boardSeq:'번호',
                 boardKind:'구분',
@@ -73,7 +84,7 @@ export default {
                 boardViewCount:'조회수',
                 boardVote:'추천'
                 },
-            boardModels: {}
+            boardModels: {},
         }
     },
     computed:{
@@ -91,19 +102,27 @@ export default {
         }
     },
     methods:{
-        getBoardByPage(page,pageSize){
+        getBoardCount(){
+            axios.get(`http://localhost:8000/board/count/param=${JSON.stringify(this.getBoardRequest)}`)
+            .then(data=>{
+                if(data.status === 200){
+                    this.pageVo.boardCount = data.data
+                }                 
+            })
+        },
+        async getBoard(page){
+            if(page===0){
+                page = 1
+                this.getBoardRequest.searchWord = this.$refs.searchWord.value
+                await this.getBoardCount()
+            }
             this.pageVo.page = page
-            axios.get(`http://localhost:8000/board/page=${page}&pageSize=${pageSize}`)
+            this.getBoardRequest.startRow = (page-1) * this.pageVo.pageSize
+            this.getBoardRequest.rowLimit = this.pageVo.pageSize
+            axios.get(`http://localhost:8000/board/param=${JSON.stringify(this.getBoardRequest)}`)
                 .then(data=>{
                     if(data.status === 200){
                         this.boardModels = data.data
-                        console.log(
-                            'page = '+ this.pageVo.page,
-                            'block = '+ this.pageVo.block(),
-                            'pageCount = '+ this.pageVo.pageCount(),
-                            'blockCount = '+ this.pageVo.blockCount(),
-                            'pageArray = '+ this.pageVo.pageArray()
-                        )
                     }
                 })
         },
@@ -116,6 +135,11 @@ export default {
         },
         selectBoard(board){
             this.$router.push({name:'View',params: board})
+        },
+        check(){
+            this.getBoardRequest.boardKind = this.boardKinds.map(
+                a => this.$refs['checked'+a.value].checked ? a.value : 0)
+                .reduce((a,b) => a+b)
         }
     }
 }

@@ -5,7 +5,6 @@
             <span @click="modify()">수정</span>
             <span @click="cancle()">취소</span>
         </div>
-        <input v-model="boardModel.boardTitle" type="text">
     </div>
 </template>
 

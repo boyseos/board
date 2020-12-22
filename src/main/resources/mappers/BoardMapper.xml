@@ -3,29 +3,38 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.board.web.board.BoardRepository">
-	<select id="findAll" resultType="BoardModel">
+	<select id="getPage" parameterType="hashMap" resultType="BoardModel">
 		SELECT *
 		FROM board
-	</select>
-	<select id="getPage" resultType="BoardModel">
-		SELECT *
-		FROM board
-		ORDER BY `boardSeq` DESC LIMIT #{page} , #{pageSize}
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="searchType!=null and searchWord!=null">
+				${searchType} like '%${searchWord}%'
+			</if>
+			<!-- <if test="boardKind=1">
+				boardKind like ${boardKind}
+			</if> -->
+		</trim>
+		ORDER BY `boardSeq` DESC LIMIT #{startRow} , #{rowLimit}
 	</select>
 	<select id="boardCount" resultType="int">
-		SELECT count(*)
+		SELECT count(boardSeq)
 		from board
-	</select>
-	<select id="findByBoardSeq" resultType="BoardModel">
-		SELECT *
-		FROM board
-		Where boardSeq = #{seq}
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="searchType!=null and searchWord!=null">
+				${searchType} like '%${searchWord}%'
+			</if>
+		</trim>
 	</select>
 	<update id="boardViewCountUp">
 		UPDATE board
 		SET boardViewCount = boardViewCount + 1
 		Where boardSeq = #{seq}	
 	</update>
+	<select id="findByBoardSeq" resultType="BoardModel">
+		SELECT *
+		FROM board
+		Where boardSeq = #{seq}
+	</select>
 	<update id="updateByBoardSeq" parameterType="BoardModel">
 		UPDATE board
 		SET boardTitle = #{boardTitle},
