@@ -13,6 +13,7 @@
                     <input v-model="boardModel.boardWriter" @input="update()" type="text">
                 </th>
             </tr>
+            <tr><slot name="types"></slot></tr>
             <tr>
                 <th>content</th>
                 <th>
@@ -28,7 +29,7 @@
 
 export default {
     props:{
-        boardProps:{
+        value:{
             type: Object,
             required: false,
             default(){
@@ -42,7 +43,7 @@ export default {
     },
     data(){
         return{
-            boardModel: this.boardProps
+            boardModel: this.value
         }
     },
     methods:{

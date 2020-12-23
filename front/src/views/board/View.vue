@@ -1,6 +1,6 @@
 <template>
     <div>
-        <view-box :boardProps="boardModel" />
+        <view-box v-model="boardModel"/>
         <div>
             <span @click="modify()">수정</span>
             <span @click="cancle()">취소</span>
@@ -15,14 +15,8 @@ import axios from 'axios'
 export default {
     components:{ViewBox},
     beforeMount(){
-        // axios.get(`http://localhost:8000/board/seq=${this.seq}`)
-        //     .then(data=>{
-        //         if(data.status === 200){
-        //             this.boardModel = data.data
-        //             console.log('보낸 데이터',this.boardModel)
-        //         }                 
-        //     })
-        //     .catch(e => console.log(e))
+        if(this.$route.params.boardTitle == undefined)
+            this.getBoardBySeq(this.$route.params.boardSeq)
     },
     data(){
         return{
@@ -45,6 +39,16 @@ export default {
         cancle(){
             console.log('emit Test',this.boardModel)
             this.$router.push({name:'Board'})
+        },
+        getBoardBySeq(seq){
+            axios.get(`http://localhost:8000/board/seq=${seq}`)
+            .then(data=>{
+                if(data.status === 200){
+                    this.boardModel = data.data
+                    console.log('보낸 데이터',this.boardModel)
+                }                 
+            })
+            .catch(e => console.log(e))
         }
     }
 }

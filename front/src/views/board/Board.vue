@@ -8,7 +8,7 @@
             </tr>
             <tr v-for="board in boardModels" :key="board.boardSeq" @click="selectBoard(board)">
                 <th v-for="th in Object.keys(boardTableTh)" :key="th">
-                    {{board[th]}}
+                    {{th != 'boardKind' ? board[th] : boardKinds[Math.log2(board.boardKind)].text}}
                 </th>
             </tr>
         </table>
@@ -45,11 +45,13 @@
 import axios from 'axios'
 export default {
     beforeMount(){
+        this.getBoardRequest.boardKind = Math.pow(2,this.boardKinds.length) - 1
         this.getBoardCount()
         this.getBoard(1)
     },
     data(){
         return {
+            win: window,
             pageVo: {
                 boardCount: 0,
                 page: 1,
@@ -65,7 +67,7 @@ export default {
             getBoardRequest:{
                 startRow : 0,
                 rowLimit : 0,
-                boardKind : 256,
+                boardKind : 0,
                 searchType : 'boardTitle',
                 searchWord : undefined
             },
@@ -119,6 +121,7 @@ export default {
             this.pageVo.page = page
             this.getBoardRequest.startRow = (page-1) * this.pageVo.pageSize
             this.getBoardRequest.rowLimit = this.pageVo.pageSize
+            console.log('getBoardRequest',this.getBoardRequest)
             axios.get(`http://localhost:8000/board/param=${JSON.stringify(this.getBoardRequest)}`)
                 .then(data=>{
                     if(data.status === 200){
@@ -129,18 +132,16 @@ export default {
         goWrite(){
             this.$router.push({name:'Write'})
         },
-        goSearch(){
-            console.log(this.$refs.searchBy.value)
-            //this.$router.push({name:'Write'})
-        },
         selectBoard(board){
             this.$router.push({name:'View',params: board})
         },
         check(){
-            this.getBoardRequest.boardKind = this.boardKinds.map(
+            const temp = this.boardKinds.map(
                 a => this.$refs['checked'+a.value].checked ? a.value : 0)
                 .reduce((a,b) => a+b)
-        }
+            this.getBoardRequest.boardKind = temp ? temp : Math.pow(2,this.boardKinds.length) - 1
+                
+        }        
     }
 }
 </script>

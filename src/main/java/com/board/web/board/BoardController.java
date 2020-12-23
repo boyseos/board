@@ -24,14 +24,14 @@ public class BoardController {
 	
 	@GetMapping("/param={param}")
 	public List<BoardModel> getPage(@PathVariable String param) throws Exception {
-		Map<String, Object> map = boardService.stringToMap(param);
+		Map<String, Object> map = boardService.webToDb(param);
 		System.out.println("getpage =" + map.toString());
 		return boardRepository.getPage(map);
 	}
 	
 	@GetMapping("/count/param={param}")
 	public int boardCount(@PathVariable String param) throws Exception {
-		int value = boardRepository.boardCount(boardService.stringToMap(param));
+		int value = boardRepository.boardCount(boardService.webToDb(param));
 		System.out.println("boardCount ="+value);
 		return value;
 	}

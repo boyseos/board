@@ -6,24 +6,29 @@
 	<select id="getPage" parameterType="hashMap" resultType="BoardModel">
 		SELECT *
 		FROM board
-		<trim prefix="WHERE" prefixOverrides="AND">
-			<if test="searchType!=null and searchWord!=null">
-				${searchType} like '%${searchWord}%'
-			</if>
-			<!-- <if test="boardKind=1">
-				boardKind like ${boardKind}
-			</if> -->
+		<trim prefix="WHERE (" prefixOverrides="OR | AND">
+			<foreach item="item" index="index" collection="boardKinds"
+				open="OR boardKind like " separator="OR boardKind like " close=")" >
+				${item}
+			</foreach>
 		</trim>
+		<if test="searchType!=null and searchWord!=null">
+			AND ${searchType} like '%${searchWord}%'
+		</if>
 		ORDER BY `boardSeq` DESC LIMIT #{startRow} , #{rowLimit}
 	</select>
 	<select id="boardCount" resultType="int">
 		SELECT count(boardSeq)
 		from board
-		<trim prefix="WHERE" prefixOverrides="AND">
-			<if test="searchType!=null and searchWord!=null">
-				${searchType} like '%${searchWord}%'
-			</if>
+		<trim prefix="WHERE (" prefixOverrides="OR | AND">
+			<foreach item="item" index="index" collection="boardKinds"
+				open="OR boardKind like " separator="OR boardKind like " close=")">
+				${item}
+			</foreach>
 		</trim>
+		<if test="searchType!=null and searchWord!=null">
+			AND ${searchType} like '%${searchWord}%'
+		</if>
 	</select>
 	<update id="boardViewCountUp">
 		UPDATE board
