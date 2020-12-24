@@ -1,8 +1,21 @@
 <template>
     <div>
-        <view-box v-model="boardModel"/>
+        <view-box>
+            <template #title>
+                <h3>{{boardModel.boardTitle}}</h3>
+            </template>
+            <template #writer>
+                <h3>{{boardModel.boardWriter}}</h3>
+            </template>
+            <template #type>
+                <h3>{{$store.getters.getBoardTypes[Math.log2(boardModel.boardType)].text}}</h3>
+            </template>
+            <template #content>
+                <h3>{{boardModel.boardContent}}</h3>
+            </template>
+        </view-box>
         <div>
-            <span @click="modify()">수정</span>
+            <span @click="goModify()">수정</span>
             <span @click="cancle()">취소</span>
         </div>
     </div>
@@ -24,20 +37,10 @@ export default {
         }
     },
     methods:{
-        modify(){
-            axios.patch(
-                `http://localhost:8000/board/patch`,
-                this.boardModel
-            )
-                .then(data=>{
-                    if(data.status === 200){
-                        this.$router.push({name:'View',params: this.boardModel})
-                    } else
-                        console.log(data.status)
-                })
+        goModify(){
+            this.$router.push({name:'Modify',params: this.boardModel})
         },
         cancle(){
-            console.log('emit Test',this.boardModel)
             this.$router.push({name:'Board'})
         },
         getBoardBySeq(seq){
@@ -49,7 +52,7 @@ export default {
                 }                 
             })
             .catch(e => console.log(e))
-        }
+        },
     }
 }
 </script>

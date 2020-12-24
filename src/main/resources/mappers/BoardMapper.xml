@@ -7,8 +7,8 @@
 		SELECT *
 		FROM board
 		<trim prefix="WHERE (" prefixOverrides="OR | AND">
-			<foreach item="item" index="index" collection="boardKinds"
-				open="OR boardKind like " separator="OR boardKind like " close=")" >
+			<foreach item="item" index="index" collection="boardTypes"
+				open="OR boardType like " separator="OR boardType like " close=")" >
 				${item}
 			</foreach>
 		</trim>
@@ -21,8 +21,8 @@
 		SELECT count(boardSeq)
 		from board
 		<trim prefix="WHERE (" prefixOverrides="OR | AND">
-			<foreach item="item" index="index" collection="boardKinds"
-				open="OR boardKind like " separator="OR boardKind like " close=")">
+			<foreach item="item" index="index" collection="boardTypes"
+				open="OR boardType like " separator="OR boardType like " close=")">
 				${item}
 			</foreach>
 		</trim>
@@ -42,14 +42,31 @@
 	</select>
 	<update id="updateByBoardSeq" parameterType="BoardModel">
 		UPDATE board
-		SET boardTitle = #{boardTitle},
-			boardWriter = #{boardWriter},
-			boardContent = #{boardContent}
+		<trim prefix="SET " prefixOverrides=",">
+			<if test="boardType!=null">, boardType = #{boardType}</if>
+			<if test="boardTitle!=null">, boardTitle = #{boardTitle}</if>
+			<if test="boardWriter!=null">, boardWriter = #{boardWriter}</if>
+			<if test="boardContent!=null">, boardContent = #{boardContent}</if>
+			, boardDate = NOW()
+		</trim>
 		Where boardSeq = #{boardSeq}
 	</update>
 	<insert id="insertBoard" parameterType="BoardModel">
 		INSERT INTO `board`
-			(`boardContent`, `boardTitle`, `boardWriter`,`boardDate`)
-			VALUES (#{boardContent},#{boardTitle},#{boardWriter},NOW());
+			<trim prefix="(" prefixOverrides="," suffix=")">
+				<if test="boardType!=null">, `boardType`</if>
+				<if test="boardTitle!=null">, `boardTitle`</if>
+				<if test="boardWriter!=null">, `boardWriter`</if>
+				<if test="boardContent!=null">, `boardContent`</if>
+				, `boardDate`
+			</trim>
+			VALUES
+			<trim prefix="(" prefixOverrides="," suffix=")">
+				<if test="boardType!=null">, #{boardType}</if>
+				<if test="boardTitle!=null">, #{boardTitle}</if>
+				<if test="boardWriter!=null">, #{boardWriter}</if>
+				<if test="boardContent!=null">, #{boardContent}</if>
+				, NOW()
+			</trim>
 	</insert>
 </mapper>

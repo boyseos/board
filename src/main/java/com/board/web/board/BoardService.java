@@ -40,7 +40,7 @@ public class BoardService {
 	
 	public Map<String, Object> webToDb(String param){
 		Map<String, Object> map = stringToMap(param);
-		map.put("boardKinds", decTobitArray((int)map.get("boardKind")));
+		map.put("boardTypes", decTobitArray((int)map.get("boardType")));
 		return map;
 		
 	}

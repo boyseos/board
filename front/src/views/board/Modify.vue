@@ -9,7 +9,7 @@
             </template>
             <template #type>
                 <select v-model="boardModel.boardType">
-                    <option v-for="type in getBoardTypes"
+                    <option v-for="type in $store.getters.getBoardTypes"
                     :key="type" :value="type.value">{{type.text}}</option>
                 </select>
             </template>
@@ -18,39 +18,32 @@
             </template>
         </view-box>
         <div>
-            <span @click="write">작성</span>
-            <span @click="cancle">취소</span>
+            <span @click="modify()">수정</span>
+            <span @click="cancle()">취소</span>
         </div>
     </div>
 </template>
 
 <script>
 import ViewBox from '@/components/ViewBox.vue'
-import {mapGetters} from 'vuex'
 import axios from 'axios'
 
 export default {
     components:{ViewBox},
     data(){
         return{
-            boardModel: {boardType: 1},
+            boardModel: this.$route.params
         }
     },
-    computed:{
-        ...mapGetters(
-            ['getBoardTypes']
-        )
-    },
     methods:{
-        write(){
-            axios.post(
-                `http://localhost:8000/board/write`,
+        modify(){
+            axios.patch(
+                `http://localhost:8000/board/patch`,
                 this.boardModel
             )
                 .then(data=>{
                     if(data.status === 200){
-                        console.log(data.data)
-                        this.cancle()
+                        this.$router.push({name:'View',params: this.boardModel})
                     } else
                         console.log(data.status)
                 })

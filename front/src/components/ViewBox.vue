@@ -4,20 +4,26 @@
             <tr>
                 <th>title</th>
                 <th>
-                    <input v-model="boardModel.boardTitle" @input="update()" type="text">
+                    <slot name="title"/>
+                </th>
+            </tr>
+            <tr>
+                <th>type</th>
+                <th>
+                    <slot name="type"/>
                 </th>
             </tr>
             <tr>
                 <th>writer</th>
                 <th>
-                    <input v-model="boardModel.boardWriter" @input="update()" type="text">
+                    <slot name="writer"/>
                 </th>
             </tr>
             <tr><slot name="types"></slot></tr>
             <tr>
                 <th>content</th>
                 <th>
-                    <textarea v-model="boardModel.boardContent" @input="update()" cols="30" rows="10"/>
+                    <slot name="content"/>
                 </th>
             </tr>
         </table>
@@ -29,27 +35,27 @@
 
 export default {
     props:{
-        value:{
-            type: Object,
-            required: false,
-            default(){
-                return {
-                    boardTitle: '',
-                    boardWriter: '',
-                    boardContent: ''
-                }
-            }
-        },
+    //     value:{
+    //         type: Object,
+    //         required: false,
+    //         default(){
+    //             return {
+    //                 boardTitle: '',
+    //                 boardWriter: '',
+    //                 boardContent: ''
+    //             }
+    //         }
+    //     },
     },
     data(){
         return{
-            boardModel: this.value
+            //boardModel: this.value
         }
     },
     methods:{
-        update(){
-            this.$emit('update:boardProps', this.boardModel)
-        }
+        // update(){
+        //     this.$emit('update:boardProps', this.boardModel)
+        // }
     }
     
 }

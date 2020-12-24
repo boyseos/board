@@ -8,7 +8,7 @@
             </tr>
             <tr v-for="board in boardModels" :key="board.boardSeq" @click="selectBoard(board)">
                 <th v-for="th in Object.keys(boardTableTh)" :key="th">
-                    {{th != 'boardKind' ? board[th] : boardKinds[Math.log2(board.boardKind)].text}}
+                    {{th != 'boardType' ? board[th] : boardTypes[Math.log2(board.boardType)].text}}
                 </th>
             </tr>
         </table>
@@ -24,7 +24,7 @@
                     @click="getBoard(nextBlockNum)">&raquo;</span>
             </div>
             <div>
-                <label v-for="(box) in boardKinds" :key="box">
+                <label v-for="(box) in boardTypes" :key="box">
                     <input :ref="'checked'+box.value" @click="check" :value="box.value" type="checkbox" checked>{{box.text}}
                 </label>
                 <select v-model="getBoardRequest.searchType">
@@ -43,15 +43,18 @@
 
 <script>
 import axios from 'axios'
+import {mapGetters, mapMutations} from 'vuex'
+
 export default {
     beforeMount(){
-        this.getBoardRequest.boardKind = Math.pow(2,this.boardKinds.length) - 1
+        //this.$store.commit('setBoardTypes',this.boardTypes)
+        this.setBoardTypes(this.boardTypes)
+        this.getBoardRequest.boardType = Math.pow(2,this.boardTypes.length) - 1
         this.getBoardCount()
         this.getBoard(1)
     },
     data(){
         return {
-            win: window,
             pageVo: {
                 boardCount: 0,
                 page: 1,
@@ -67,11 +70,11 @@ export default {
             getBoardRequest:{
                 startRow : 0,
                 rowLimit : 0,
-                boardKind : 0,
+                boardType : 0,
                 searchType : 'boardTitle',
                 searchWord : undefined
             },
-            boardKinds:[
+            boardTypes:[
                 {value:1, text:'자유'},
                 {value:2, text:'Q&A'},
                 {value:4, text:'질문'},
@@ -79,7 +82,7 @@ export default {
             ],
             boardTableTh:{
                 boardSeq:'번호',
-                boardKind:'구분',
+                boardType:'구분',
                 boardTitle:'제목',
                 boardWriter:'글쓴이',
                 boardDate:'작성일',
@@ -101,7 +104,10 @@ export default {
         },
         nextBlockNum(){
             return this.pageVo.block()*5+1
-        }
+        },
+        ...mapGetters(
+            ['getBoardTypes']
+        ),
     },
     methods:{
         getBoardCount(){
@@ -125,7 +131,10 @@ export default {
             axios.get(`http://localhost:8000/board/param=${JSON.stringify(this.getBoardRequest)}`)
                 .then(data=>{
                     if(data.status === 200){
-                        this.boardModels = data.data
+                        this.boardModels = data.data.map(a => {
+                            a.boardDate = a.boardDate.substring(0,10)
+                            return a
+                        })
                     }
                 })
         },
@@ -136,12 +145,14 @@ export default {
             this.$router.push({name:'View',params: board})
         },
         check(){
-            const temp = this.boardKinds.map(
+            const temp = this.boardTypes.map(
                 a => this.$refs['checked'+a.value].checked ? a.value : 0)
                 .reduce((a,b) => a+b)
-            this.getBoardRequest.boardKind = temp ? temp : Math.pow(2,this.boardKinds.length) - 1
-                
-        }        
+            this.getBoardRequest.boardType = temp ? temp : Math.pow(2,this.boardTypes.length) - 1
+        },
+        ...mapMutations(
+            ['setBoardTypes']
+        )
     }
 }
 </script>

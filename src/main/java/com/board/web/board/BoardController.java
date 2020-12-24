@@ -46,6 +46,7 @@ public class BoardController {
 	public void updateBoard(@RequestBody BoardModel board) throws Exception {
 		boardRepository.updateByBoardSeq(board);
 	}
+	
 	@PostMapping("/write")
 	public boolean boardWrite(@RequestBody BoardModel board) throws Exception{
 		System.out.println("글쓰기 받음 = "+board.toString());

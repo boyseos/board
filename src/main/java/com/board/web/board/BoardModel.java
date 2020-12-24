@@ -21,7 +21,7 @@ public class BoardModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private int boardSeq;
-	private String boardKind;
+	private String boardType;
 	private String boardTitle;
 	private String boardWriter;
 	private String boardContent;
