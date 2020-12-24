@@ -1,4 +1,4 @@
-package com.board.web.board;
+package com.board.web.user;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,15 +17,13 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardModel implements Serializable{
+public class UserModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	private int boardSeq;
-	private String boardType;
-	private String boardTitle;
-	private String boardWriter;
-	private String boardContent;
-	private Date boardDate;
-	private int boardViewCount;
-	private int boardVote;
+	private String id;
+	private String name;
+	private String email;
+	private String password;
+	private Date regDate;
+	private Date updateDate;
 }

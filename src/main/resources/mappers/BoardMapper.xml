@@ -3,8 +3,70 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.board.web.board.BoardRepository">
-	<select id="selectAll" resultType="map">
+	<select id="getPage" parameterType="hashMap" resultType="BoardModel">
 		SELECT *
 		FROM board
+		<trim prefix="WHERE (" prefixOverrides="OR | AND">
+			<foreach item="item" index="index" collection="boardTypes"
+				open="OR boardType like " separator="OR boardType like " close=")" >
+				${item}
+			</foreach>
+		</trim>
+		<if test="searchType!=null and searchWord!=null">
+			AND ${searchType} like '%${searchWord}%'
+		</if>
+		ORDER BY `boardSeq` DESC LIMIT #{startRow} , #{rowLimit}
 	</select>
+	<select id="boardCount" resultType="int">
+		SELECT count(boardSeq)
+		from board
+		<trim prefix="WHERE (" prefixOverrides="OR | AND">
+			<foreach item="item" index="index" collection="boardTypes"
+				open="OR boardType like " separator="OR boardType like " close=")">
+				${item}
+			</foreach>
+		</trim>
+		<if test="searchType!=null and searchWord!=null">
+			AND ${searchType} like '%${searchWord}%'
+		</if>
+	</select>
+	<update id="boardViewCountUp">
+		UPDATE board
+		SET boardViewCount = boardViewCount + 1
+		Where boardSeq = #{seq}	
+	</update>
+	<select id="findByBoardSeq" resultType="BoardModel">
+		SELECT *
+		FROM board
+		Where boardSeq = #{seq}
+	</select>
+	<update id="updateByBoardSeq" parameterType="BoardModel">
+		UPDATE board
+		<trim prefix="SET " prefixOverrides=",">
+			<if test="boardType!=null">, boardType = #{boardType}</if>
+			<if test="boardTitle!=null">, boardTitle = #{boardTitle}</if>
+			<if test="boardWriter!=null">, boardWriter = #{boardWriter}</if>
+			<if test="boardContent!=null">, boardContent = #{boardContent}</if>
+			, boardDate = NOW()
+		</trim>
+		Where boardSeq = #{boardSeq}
+	</update>
+	<insert id="insertBoard" parameterType="BoardModel">
+		INSERT INTO `board`
+			<trim prefix="(" prefixOverrides="," suffix=")">
+				<if test="boardType!=null">, `boardType`</if>
+				<if test="boardTitle!=null">, `boardTitle`</if>
+				<if test="boardWriter!=null">, `boardWriter`</if>
+				<if test="boardContent!=null">, `boardContent`</if>
+				, `boardDate`
+			</trim>
+			VALUES
+			<trim prefix="(" prefixOverrides="," suffix=")">
+				<if test="boardType!=null">, #{boardType}</if>
+				<if test="boardTitle!=null">, #{boardTitle}</if>
+				<if test="boardWriter!=null">, #{boardWriter}</if>
+				<if test="boardContent!=null">, #{boardContent}</if>
+				, NOW()
+			</trim>
+	</insert>
 </mapper>
