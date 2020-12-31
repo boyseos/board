@@ -3,7 +3,12 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     board:{},
-    boardTypes:[]
+    boardTypes:[
+      {value:1, text:'자유'},
+      {value:2, text:'Q&A'},
+      {value:4, text:'질문'},
+      {value:8, text:'Test'}
+  ],
   },
   getters:{
     getBoardTypes(state){

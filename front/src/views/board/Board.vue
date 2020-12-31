@@ -132,7 +132,7 @@ export default {
                 .then(data=>{
                     if(data.status === 200){
                         this.boardModels = data.data.map(a => {
-                            a.boardDate = a.boardDate.substring(0,10)
+                            a.boardDate = a.boardDate ? a.boardDate.substring(0,10) : '없음'
                             return a
                         })
                     }

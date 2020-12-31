@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.web.reply.ReplyRepository">
+	<select id="getReplyList" resultType="ReplyModel">
+		SELECT *
+		FROM reply
+		WHERE boardSeq like #{seq}
+		<!-- ORDER BY `boardSeq` DESC LIMIT #{startRow} , #{rowLimit} -->
+	</select>
+
+	<insert id="insertReply" parameterType="ReplyModel">
+		INSERT INTO `reply`
+			<trim prefix="(" prefixOverrides="," suffix=")">
+				<if test="replyContent!=null">, `replyContent`</if>
+				<if test="replyDepth!=null">, `replyDepth`</if>
+				<if test="boardSeq!=null">, `boardSeq`</if>
+				<if test="userId!=null">, `userId`</if>
+				<if test="inReplyNo!=null">, `inReplyNo`</if>
+			</trim>
+			VALUES
+			<trim prefix="(" prefixOverrides="," suffix=")">
+				<if test="replyContent!=null">, #{replyContent}</if>
+				<if test="replyDepth!=null">, #{replyDepth}</if>
+				<if test="boardSeq!=null">, #{boardSeq}</if>
+				<if test="userId!=null">, #{userId}</if>
+				<if test="inReplyNo!=null">, #{inReplyNo}</if>
+			</trim>
+	</insert>
+</mapper>
