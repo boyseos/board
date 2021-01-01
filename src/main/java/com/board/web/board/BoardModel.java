@@ -19,7 +19,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class BoardModel implements Serializable{
 	private static final long serialVersionUID = 1L;
-	
+
 	private int boardSeq;
 	private String boardType;
 	private String boardTitle;

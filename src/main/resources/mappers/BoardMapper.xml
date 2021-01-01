@@ -35,11 +35,24 @@
 		SET boardViewCount = boardViewCount + 1
 		Where boardSeq = #{seq}	
 	</update>
-	<select id="findByBoardSeq" resultType="BoardModel">
+	<update id="findByBoardSeq">
+		UPDATE board
+		SET boardViewCount = boardViewCount + 1
+		<!-- Where boardSeq = #{seq} -->
+		Where boardSeq = #{boardSeq}
+		<selectKey
+		keyProperty="boardTitle,boardType,boardWriter,boardContent"
+		resultType="BoardModel" order="AFTER">
+			SELECT *
+			FROM board
+			Where boardSeq = #{boardSeq}
+		</selectKey>
+	</update>
+	<!-- <select id="findByBoardSeq" resultType="BoardModel">
 		SELECT *
 		FROM board
 		Where boardSeq = #{seq}
-	</select>
+	</select> -->
 	<update id="updateByBoardSeq" parameterType="BoardModel">
 		UPDATE board
 		<trim prefix="SET " prefixOverrides=",">

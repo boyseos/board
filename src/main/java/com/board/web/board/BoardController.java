@@ -26,6 +26,7 @@ public class BoardController {
 	public List<BoardModel> getPage(@PathVariable String param) throws Exception {
 		Map<String, Object> map = boardService.webToDb(param);
 		System.out.println("getpage =" + map.toString());
+		System.out.println(boardRepository.getPage(map).toString());
 		return boardRepository.getPage(map);
 	}
 	
@@ -38,8 +39,9 @@ public class BoardController {
 	
 	@GetMapping("/seq={seq}")
 	public BoardModel getBoard(@PathVariable int seq) throws Exception {
-		//boardRepository.boardViewCountUp(seq);
-		return boardRepository.findByBoardSeq(seq);
+		BoardModel bm = new BoardModel(seq,"","","","",null,0,0);
+		boardRepository.findByBoardSeq(bm);
+		return bm;
 	}
 	
 	@PatchMapping("/patch")

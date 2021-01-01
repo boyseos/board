@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReplyRepository {
 	public List<ReplyModel> getReplyList(@Param("seq") int seq) throws Exception;
-	public void insertReply(ReplyModel reply) throws Exception;
+	public int insertReply(ReplyModel reply) throws Exception;
 }

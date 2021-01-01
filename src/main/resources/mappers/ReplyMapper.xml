@@ -10,7 +10,7 @@
 		<!-- ORDER BY `boardSeq` DESC LIMIT #{startRow} , #{rowLimit} -->
 	</select>
 
-	<insert id="insertReply" parameterType="ReplyModel">
+	<insert id="insertReply" parameterType="ReplyModel" useGeneratedKeys="true" keyColumn="replyNo" keyProperty="replyNo">
 		INSERT INTO `reply`
 			<trim prefix="(" prefixOverrides="," suffix=")">
 				<if test="replyContent!=null">, `replyContent`</if>

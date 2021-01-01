@@ -13,7 +13,8 @@ public interface BoardRepository {
 	public List<BoardModel> getPage(Map<String, Object> param) throws Exception;
 	public int boardCount(Map<String, Object> param) throws Exception;
 	public void boardViewCountUp(@Param("seq") int seq) throws Exception;
-	public BoardModel findByBoardSeq(@Param("seq") int seq) throws Exception;
+	//public BoardModel findByBoardSeq(@Param("seq") int seq) throws Exception;
+	public int findByBoardSeq(BoardModel board) throws Exception;
 	public void updateByBoardSeq(BoardModel board) throws Exception;
 	public boolean insertBoard(BoardModel board) throws Exception;
 }
